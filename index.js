@@ -10,15 +10,15 @@ const { log } = require('console');
 const port = 4000 ;
 
 
-const corsOptions = {
-    origin: 'https://silvanest.netlify.app/',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-  };
+// const corsOptions = {
+//     origin: 'https://silvanest.netlify.app/',
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+//   };
 
 
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 // app.get('/.netlify/functions/index' , (req , res) => {
 //     return res.json({
 //         messages: "hello World"
