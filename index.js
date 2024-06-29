@@ -10,25 +10,13 @@ const { log } = require('console');
 const port = 4000 ;
 
 
-// const corsOptions = {
-//     origin: 'https://silvanest.netlify.app/',
-//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   };
+
 
 
 
 app.use(express.json());
 app.use(cors());
-// app.get('/.netlify/functions/index' , (req , res) => {
-//     return res.json({
-//         messages: "hello World"
 
-//     })
-// })
-
-// const handler = serverless(app);
-
-// Database Connection With MongoDB
 
 mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mongodb.net/e-commerce')
     .then(() => {
@@ -47,7 +35,7 @@ app.get("/" , (req , res) => {
 // Image  Storage Engine
 
 const storage = multer.diskStorage({
-    destination: '/tmp/' ,
+    destination: './upload/images' ,
     filename: (req , file , cb) => {
         return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
     }
@@ -408,8 +396,5 @@ app.listen(port , (err) => {
     }
 });
 
-// module.exports.handler = async(event , context) => {
-//         const result = await handler(event , context);
-//         return result; 
-// }
+
 
