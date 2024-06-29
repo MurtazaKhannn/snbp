@@ -10,14 +10,22 @@ const { log } = require('console');
 const port = 4000 ;
 
 
-
+// const corsOptions = {
+//     origin: 'https://silvanest.netlify.app/',
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+//   };
 
 
 
 app.use(express.json());
 app.use(cors());
-
-
+// app.get('/.netlify/functions/index' , (req , res) => {
+//     return res.json({
+//         messages: "hello World"
+//     })
+// })
+// const handler = serverless(app);
+// Database Connection With MongoDB
 mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mongodb.net/e-commerce')
     .then(() => {
         console.log('Database Connected');
@@ -25,40 +33,29 @@ mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mon
     .catch((err) => {
         console.log(err);
     });
-
 // API Creation
-
 app.get("/" , (req , res) => {
     res.send("Welcome to Silvanest");
 })
-
 // Image  Storage Engine
-
 const storage = multer.diskStorage({
-    destination: './upload/images' ,
+    destination: '/tmp/' ,
     filename: (req , file , cb) => {
         return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
     }
 })
-
 const upload = multer({
     storage: storage
 })
-
 //Creating Upload Endpoint for images
-
 app.use('/images' , express.static('upload/images'))
-
-
 app.post("/upload" , upload.single('product') , (req , res) => {
     res.json({
         success: 1 ,
         image_url: `http://localhost:${port}/images/${req.file.filename}`
     })
 })
-
 // Schema for creating products 
-
 const Product = mongoose.model("Product" , {
     id : {
         type: Number ,
@@ -97,11 +94,9 @@ const Product = mongoose.model("Product" , {
         required: true
     }  
 })
-
 app.post('/addproduct', async (req, res) => {
     let products = await Product.find({});
     let id;
-
     // Calculate new product ID
     if (products.length > 0) {
         let last_product_array = products.slice(-1);
@@ -110,7 +105,6 @@ app.post('/addproduct', async (req, res) => {
     } else {
         id = 1;
     }
-
     // Create new Product object
     const product = new Product({
         id: id,
@@ -139,9 +133,7 @@ app.post('/addproduct', async (req, res) => {
         });
     }
 });
-
 //Creating API For Deleting Products
-
 app.post('/removeproduct' , async (req ,res) => {
     await Product.findOneAndDelete({id:req.body.id});
     console.log("Removed");
@@ -150,9 +142,7 @@ app.post('/removeproduct' , async (req ,res) => {
         name : req.body.name
     })
 })
-
 // Creating API For Getting all Products
-
 app.get('/allproducts' , async (req, res) => {
     let products = await Product.find({});
     console.log("All Products Fetched");
@@ -161,9 +151,7 @@ app.get('/allproducts' , async (req, res) => {
         products: products
     })
 })
-
 // Schema For user Model
-
 const Users = mongoose.model("Users" , {
     name: {
         type: String,
@@ -183,17 +171,14 @@ const Users = mongoose.model("Users" , {
         default:Date.now
     }
 })
-
 // Creating endpoint for registering the user
 app.post('/signup' , async (req , res) => {
     let check = await Users.findOne({
         email: req.body.email
     })
-
     if(check) {
         return res.status(400).json({success:false,error:"existing user found with same email id"});
     }
-
     let cart = {}
         for (let i = 0; i < 300; i++) {
             cart[i] = 0;
@@ -204,37 +189,29 @@ app.post('/signup' , async (req , res) => {
             password:  req.body.password,
             cartData: cart
         })
-
         await user.save();
-
         const data = {
             user:{
                 id:user.id
             }
         }
-
         const token = jwt.sign(data, "secret_ecom");
-
         res.json({success:true , token})
     
 })
-
 // Creating endpoint for user login
 app.post('/login' , async (req, res) => {
     let user = await Users.findOne({
         email: req.body.email
     })
-
     if(user) {
         const passCompare =  req.body.password === user.password ;
         if(passCompare) {
-
             const data = {
                 user:{
                     id:user.id
                 }
             }
-
             const token = jwt.sign(data , 'secret_ecom');
             res.json({success:true , token})
         } else {
@@ -252,16 +229,13 @@ app.get("/newcollections", async (req , res) => {
     console.log(('NewCollection Fetched'));
     res.send(newcollection);
 })
-
 //Creating endpoint for popular products
-
 app.get('/popularinfilefolder' , async (req , res) => {
     let products = await Product.find({category: 'File-Folder'});
     let popularinFile_Folder = products.slice(0 , 4);
     console.log("Popular Products in File-Folder Fetched");
     res.send(popularinFile_Folder);
 })
-
 //Creating middleware to fetch user
 const fetchUser = async (req , res , next) => {
     const token = req.header('auth-token');
@@ -277,7 +251,6 @@ const fetchUser = async (req , res , next) => {
         }
     }
 }
-
 // Add a new schema for reviews
 const Review = mongoose.model("Review", {
     productId: { type: mongoose.Schema.Types.ObjectId },
@@ -294,13 +267,10 @@ app.post("/product/:id/addreview", fetchUser, async (req, res) => {
     const { rating, reviewText , date } = req.body;
     const userId = req.user.id;
     const productId = req.params.id;
-
     console.log({rating, reviewText, userId,productId , date})
-
     if (!userId) {
         return res.status(401).json({ success: false, error: "Please authenticate using a valid token" });
     }
-
     const review = new Review({
         productId: productId,
         userId: userId,
@@ -308,7 +278,6 @@ app.post("/product/:id/addreview", fetchUser, async (req, res) => {
         reviewText: reviewText,
         date: date
     });
-
     try {
         await review.save();
         res.json({ success: true, review });
@@ -317,8 +286,6 @@ app.post("/product/:id/addreview", fetchUser, async (req, res) => {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 });
-
-
   
   // Create an endpoint to get reviews for a product
   app.get("/reviews/:productId", async (req, res) => {
@@ -332,46 +299,35 @@ app.post("/product/:id/addreview", fetchUser, async (req, res) => {
       res.status(500).json({ success: false, error: "Internal server error" });
     }
   });
-
 //Creating endpoint for adding products in cartdata
-
 app.post('/addtocart' , fetchUser ,  async (req, res) => {
     console.log("Added" , req.body.itemId);
     let userData = await Users.findOne({
         _id: req.user.id
     })
-
     userData.cartData[req.body.itemId] += 1 ;
     await Users.findOneAndUpdate({_id:req.user.id} , {cartData:userData.cartData});
     res.send("Added")
 })
-
 //Creating endpoint to remove the product from cart
-
 app.post('/removefromcart' , fetchUser , async (req, res) => {
     console.log("removed" , req.body.itemId);
     let userData = await Users.findOne({
         _id: req.user.id
     })
-
     if(userData.cartData[req.body.itemId]>0)
-
     userData.cartData[req.body.itemId] -= 1 ;
     await Users.findOneAndUpdate({_id:req.user.id} , {cartData:userData.cartData});
     res.send("Removed")
 })
-
 //creating endpoint to get CartData
-
 app.post("/getcart" , fetchUser , async (req , res) => {
     let userData = await Users.findOne({
         _id: req.user.id
     })
     res.json(userData.cartData);
 })
-
 //Creating endpoint for related products
-
 // Creating endpoint for related products based on category
 app.get('/relatedproducts/:category', async (req, res) => {
     const category = req.params.category;
@@ -385,9 +341,6 @@ app.get('/relatedproducts/:category', async (req, res) => {
     }
   });
   
-
-
-
 app.listen(port , (err) => {
     if(!err){
         console.log("Server Running on port " + port);
@@ -395,6 +348,7 @@ app.listen(port , (err) => {
         console.log("Error : " + err);
     }
 });
-
-
-
+// module.exports.handler = async(event , context) => {
+//         const result = await handler(event , context);
+//         return result; 
+// }
