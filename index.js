@@ -33,62 +33,62 @@ app.get("/" , (req , res) => {
     res.send("Welcome to Silvanest");
 })
 // Image  Storage Engine
-const storage = multer.diskStorage({
-    // destination: function (req, file, cb) {
-    //   cb(null, path.join(__dirname,'/upload/images'))
-    // },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname)
-    }
-  })
+// const storage = multer.diskStorage({
+//     // destination: function (req, file, cb) {
+//     //   cb(null, path.join(__dirname,'/upload/images'))
+//     // },
+//     filename: function (req, file, cb) {
+//         cb(null, file.originalname)
+//     }
+//   })
 
-const upload = multer({
-    storage: storage
-})
+// const upload = multer({
+//     storage: storage
+// })
 
-//cloudinary setup
-cloudinary.config({
-    cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME ,
-    api_key: process.env.API_CLOUDINARY_API_KEY ,
-    api_secret: process.env.API_CLOUDINARY_SECRET_KEY
-});
+// //cloudinary setup
+// cloudinary.config({
+//     cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME ,
+//     api_key: process.env.API_CLOUDINARY_API_KEY ,
+//     api_secret: process.env.API_CLOUDINARY_SECRET_KEY
+// });
 
-const uploadMultiple = async (req , res , next) => {
-    try{
-        const images = req.files;
-        console.log(images);
-        const imageUrls = [];
-        for(const image of images){
-            const result = await cloudinary.uploader.upload(image.path , {
-                resource_type: "auto"
-            });
+// const uploadMultiple = async (req , res , next) => {
+//     try{
+//         const images = req.files;
+//         console.log(images);
+//         const imageUrls = [];
+//         for(const image of images){
+//             const result = await cloudinary.uploader.upload(image.path , {
+//                 resource_type: "auto"
+//             });
 
-            imageUrls.push(result.secure_url);
-        }
+//             imageUrls.push(result.secure_url);
+//         }
 
-        req.images = imageUrls;
-        console.log(req.images);
+//         req.images = imageUrls;
+//         console.log(req.images);
 
-        next();
+//         next();
         
-    } catch(error) {
-        console.error(error)
-        res.status(500).json({
-            success: 0,
-            error: "Failed to upload images"
-        })
-    }
-}
+//     } catch(error) {
+//         console.error(error)
+//         res.status(500).json({
+//             success: 0,
+//             error: "Failed to upload images"
+//         })
+//     }
+// }
 
-//Creating Upload Endpoint for images
-app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
-app.post("/upload/images" , upload.single('product'), (req , res) => {
-    console.log(req.file)
-    res.json({
-        success: 1 ,
-        image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
-    })
-})
+// //Creating Upload Endpoint for images
+// app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
+// app.post("/upload/images" , upload.single('product'), (req , res) => {
+//     console.log(req.file)
+//     res.json({
+//         success: 1 ,
+//         image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
+//     })
+// })
 // Schema for creating products 
 const Product = mongoose.model("Product" , {
     id : {
