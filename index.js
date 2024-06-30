@@ -81,7 +81,7 @@ app.get("/" , (req , res) => {
 // }
 
 // //Creating Upload Endpoint for images
-// app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
+app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
 // app.post("/upload/images" , upload.single('product'), (req , res) => {
 //     console.log(req.file)
 //     res.json({
