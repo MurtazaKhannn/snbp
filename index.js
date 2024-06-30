@@ -53,7 +53,7 @@ const upload = multer({
 })
 //Creating Upload Endpoint for images
 app.use('/images' , express.static('/upload/images'))
-app.post("/upload" , upload.single('product') , (req , res) => {
+app.post("/upload/images" , upload.single('product') , (req , res) => {
     res.json({
         success: 1 ,
         image_url: `https://silvanestbackend-2mrtrrexv-murtazakhannns-projects.vercel.app/images/${req.file.filename}`
