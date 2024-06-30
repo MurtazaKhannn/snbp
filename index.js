@@ -8,7 +8,9 @@ const path = require('path');
 const cors = require('cors');
 const { log } = require('console');
 const cloudinary = require('cloudinary').v2;
+require('dotenv').config()
 const port = 4000 ;
+
 
 
 
