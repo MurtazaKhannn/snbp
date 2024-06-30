@@ -84,10 +84,10 @@ const uploadMultiple = async (req , res , next) => {
 app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
 app.post("/upload/images" , upload.array('images') , uploadMultiple , (req , res) => {
     console.log(req.file)
-    // res.json({
-    //     success: 1 ,
-    //     image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
-    // })
+    res.json({
+        success: 1 ,
+        image_url: `https://silvanestbackend.vercel.app/images/${req.images[0]}`
+    })
 })
 // Schema for creating products 
 const Product = mongoose.model("Product" , {
