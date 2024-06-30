@@ -7,13 +7,9 @@ const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const { log } = require('console');
+const cloudinary = require('cloudinary').v2;
 const port = 4000 ;
 
-
-// const corsOptions = {
-//     origin: 'https://silvanest.netlify.app/',
-//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   };
 
 
 
@@ -21,14 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 
-// app.get('/.netlify/functions/index' , (req , res) => {
-//     return res.json({
-//         messages: "hello World"
-//     })
-// })
-// const handler = serverless(app);
-// Database Connection With MongoDB
-
+// Database Connection With MongoDB 
 
 mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mongodb.net/e-commerce')
     .then(() => {
@@ -54,9 +43,44 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage
 })
+
+//cloudinary setup
+cloudinary.config({
+    cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME ,
+    api_key: process.env.API_CLOUDINARY_API_KEY ,
+    api_secret: process.env.API_CLOUDINARY_SECRET_KEY
+});
+
+const uploadMultiple = async (req , res , next) => {
+    try{
+        const images = req.files;
+        console.log(images);
+        const imageUrls = [];
+        for(const image of images){
+            const result = await cloudinary.uploader.upload(image.path , {
+                resource_type: "auto"
+            });
+
+            imageUrls.push(result.secure_url);
+        }
+
+        req.images = imageUrls;
+        console.log(req.images);
+
+        next();
+        
+    } catch(error) {
+        console.error(error)
+        res.status(500).json({
+            success: 0,
+            error: "Failed to upload images"
+        })
+    }
+}
+
 //Creating Upload Endpoint for images
 app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
-app.post("/upload/images" , upload.single('product') , (req , res) => {
+app.post("/upload/images" , upload.single('product') , uploadMultiple , (req , res) => {
     console.log(req.file)
     res.json({
         success: 1 ,
@@ -122,7 +146,7 @@ app.post('/addproduct', async (req, res) => {
         new_price: req.body.new_price,
         old_price: req.body.old_price,
         description: req.body.description,
-        available: req.body.available // Ensure availability is correctly parsed
+        available: req.body.available 
     });
     
     try {
