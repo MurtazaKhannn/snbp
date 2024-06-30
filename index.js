@@ -86,7 +86,7 @@ app.post("/upload/images" , upload.array('images') , uploadMultiple , (req , res
     console.log(req.file)
     res.json({
         success: 1 ,
-        image_url: `https://silvanestbackend.vercel.app/images/${req.images[0]}`
+        image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
     })
 })
 // Schema for creating products 
