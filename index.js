@@ -8,16 +8,18 @@ const path = require('path');
 const cors = require('cors');
 const { log } = require('console');
 const port = 4000 ;
-
-
 // const corsOptions = {
 //     origin: 'https://silvanest.netlify.app/',
 //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 //   };
 
 
-
 app.use(express.json());
+// app.use(cors({
+//     origin: 'https://silvanestadminpanel.vercel.app', // Allow requests from your admin panel
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
+//     allowedHeaders: ['Content-Type', 'Authorization'] // Allow these headers
+// }));
 app.use(cors());
 
 
@@ -28,8 +30,6 @@ app.use(cors());
 // })
 // const handler = serverless(app);
 // Database Connection With MongoDB
-
-
 mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mongodb.net/e-commerce')
     .then(() => {
         console.log('Database Connected');
@@ -43,21 +43,17 @@ app.get("/" , (req , res) => {
 })
 // Image  Storage Engine
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname,'/upload/images'))
-    },
-    filename: function (req, file, cb) {
+    destination: '/upload/images' ,
+    filename: (req , file , cb) => {
         return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
     }
-  })
-
+})
 const upload = multer({
     storage: storage
 })
 //Creating Upload Endpoint for images
-app.use('/images' , express.static(path.join(__dirname ,'upload')))
-app.post("/upload/images" , upload.single('product') , (req , res) => {
-    console.log(req.file)
+app.use('/images' , express.static('/upload/images'))
+app.post("/upload" , upload.single('product') , (req , res) => {
     res.json({
         success: 1 ,
         image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
