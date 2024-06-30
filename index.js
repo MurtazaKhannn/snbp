@@ -82,7 +82,7 @@ const uploadMultiple = async (req , res , next) => {
 
 //Creating Upload Endpoint for images
 app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
-app.post("/upload/images" , upload.single('product') , uploadMultiple , (req , res) => {
+app.post("/upload/images" , upload.array('images') , uploadMultiple , (req , res) => {
     console.log(req.file)
     res.json({
         success: 1 ,
