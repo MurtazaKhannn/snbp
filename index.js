@@ -56,7 +56,7 @@ const upload = multer({
 })
 //Creating Upload Endpoint for images
 app.use('/images' , express.static(path.join(__dirname ,'upload')))
-app.post("/upload/images" , upload.single('cproduct') , (req , res) => {
+app.post("/upload/images" , upload.single('product') , (req , res) => {
     console.log(req.file)
     res.json({
         success: 1 ,
