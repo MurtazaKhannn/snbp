@@ -44,7 +44,7 @@ app.get("/" , (req , res) => {
 // Image  Storage Engine
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname,'/tmp/'))
+      cb(null, path.join(__dirname,'/upload/images'))
     },
     filename: function (req, file, cb) {
         return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
@@ -55,8 +55,9 @@ const upload = multer({
     storage: storage
 })
 //Creating Upload Endpoint for images
-app.use('/images' , express.static('/tmp/'))
-app.post("/upload" , upload.single('product') , (req , res) => {
+app.use('/images' , express.static(path.join(__dirname ,'upload')))
+app.post("/upload/images" , upload.single('product') , (req , res) => {
+    console.log(req.file)
     res.json({
         success: 1 ,
         image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
