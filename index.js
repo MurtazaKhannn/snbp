@@ -23,6 +23,8 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Allow these headers
 }));
+
+
 // app.get('/.netlify/functions/index' , (req , res) => {
 //     return res.json({
 //         messages: "hello World"
@@ -30,6 +32,8 @@ app.use(cors({
 // })
 // const handler = serverless(app);
 // Database Connection With MongoDB
+
+
 mongoose.connect('mongodb+srv://murtazakhan1910:Murtaza0191@cluster0.97myfmh.mongodb.net/e-commerce')
     .then(() => {
         console.log('Database Connected');
