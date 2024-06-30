@@ -18,11 +18,7 @@ const port = 4000 ;
 
 
 app.use(express.json());
-app.use(cors({
-    origin: 'https://silvanestadminpanel.vercel.app', // Allow requests from your admin panel
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'] // Allow these headers
-}));
+app.use(cors());
 
 
 // app.get('/.netlify/functions/index' , (req , res) => {
