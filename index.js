@@ -56,7 +56,7 @@ app.use('/images' , express.static('/tmp/'))
 app.post("/upload/images" , upload.single('product') , (req , res) => {
     res.json({
         success: 1 ,
-        image_url: `https://silvanestbackend-2mrtrrexv-murtazakhannns-projects.vercel.app/images/${req.file.filename}`
+        image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
     })
 })
 // Schema for creating products 
