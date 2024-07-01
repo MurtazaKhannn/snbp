@@ -47,7 +47,15 @@ app.get("/", (req, res) => {
 // Image  Storage Engine
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "/upload/images"));
+    cb(
+      null,
+      path.join(
+        __dirname,
+        process.env.status === "Production"
+          ? "/upload/images/"
+          : "./upload/images/"
+      )
+    );
   },
   filename: function (req, file, cb) {
     return cb(null, "temp.jpg");
@@ -68,7 +76,9 @@ cloudinary.config({
 app.use("/images", express.static(path.join(__dirname, "upload/images")));
 app.post("/upload/images", upload.single("product"), (req, res) => {
   console.log(req.file);
-  cloudinary.uploader.upload("upload/images/temp.jpg").then((result) => console.log(result));
+  cloudinary.uploader
+    .upload("upload/images/temp.jpg")
+    .then((result) => console.log(result));
 
   res.json({
     success: 1,
