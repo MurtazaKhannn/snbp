@@ -9,6 +9,7 @@ const cors = require('cors');
 const { log } = require('console');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config()
+const fileUpload = require('express-fileupload');
 const port = 4000 ;
 
 
@@ -17,6 +18,11 @@ const port = 4000 ;
 
 app.use(express.json());
 app.use(cors());
+
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+}));
 
 
 // Database Connection With MongoDB 
@@ -46,28 +52,33 @@ app.get("/" , (req , res) => {
 //     storage: storage
 // })
 
-// //cloudinary setup
-// cloudinary.config({
-//     cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME ,
-//     api_key: process.env.API_CLOUDINARY_API_KEY ,
-//     api_secret: process.env.API_CLOUDINARY_SECRET_KEY
-// });
+//cloudinary setup
+cloudinary.config({
+    cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME ,
+    api_key: process.env.API_CLOUDINARY_API_KEY ,
+    api_secret: process.env.API_CLOUDINARY_SECRET_KEY
+});
+
+const images = [
+    './images/2RingConferenceFSA4.jpg' ,
+    './images/product_1719757402048.jpg'
+]
 
 // const uploadMultiple = async (req , res , next) => {
 //     try{
-//         const images = req.files;
-//         console.log(images);
-//         const imageUrls = [];
+//         // const images = req.files;
+//         // console.log(images);
+//         // const imageUrls = [];
 //         for(const image of images){
 //             const result = await cloudinary.uploader.upload(image.path , {
 //                 resource_type: "auto"
 //             });
-
-//             imageUrls.push(result.secure_url);
+//             console.log(result.secure_url);
+//             // imageUrls.push(result.secure_url);
 //         }
 
-//         req.images = imageUrls;
-//         console.log(req.images);
+        // req.images = imageUrls;
+        // console.log(req.images);
 
 //         next();
         
@@ -82,13 +93,36 @@ app.get("/" , (req , res) => {
 
 // //Creating Upload Endpoint for images
 app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
-// app.post("/upload/images" , upload.single('product'), (req , res) => {
-//     console.log(req.file)
-//     res.json({
-//         success: 1 ,
-//         image_url: `https://silvanestbackend.vercel.app/images/${req.file.filename}`
-//     })
-// })
+
+// Endpoint to upload images to Cloudinary
+// Endpoint to upload images to Cloudinary
+app.post('/upload/images', async (req, res) => {
+    try {
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+        }
+
+        const file = req.files.image;
+        cloudinary.uploader.upload(file.tempFilePath, { resource_type: 'auto' }, (error, result) => {
+            if (error) {
+                return res.status(500).json({
+                    success: false,
+                    error: 'Failed to upload image'
+                });
+            }
+            res.json({
+                success: true,
+                image_url: result.secure_url
+            });
+        });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
 // Schema for creating products 
 const Product = mongoose.model("Product" , {
     id : {
