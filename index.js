@@ -64,6 +64,12 @@ const images = [
     './images/product_1719757402048.jpg'
 ]
 
+app.use(
+    express.json({
+            limit: "20mb",
+        })
+    )
+
 // const uploadMultiple = async (req , res , next) => {
 //     try{
 //         // const images = req.files;
@@ -96,31 +102,20 @@ app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
 
 // Endpoint to upload images to Cloudinary
 // Endpoint to upload images to Cloudinary
-app.post('/upload/images', async (req, res) => {
-    try {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
-        }
+app.post('/upload/images', async (req, res , next) => {
+    
 
-        const file = req.files.image;
-        cloudinary.uploader.upload(file.tempFilePath, { resource_type: 'auto' }, (error, result) => {
-            if (error) {
-                return res.status(500).json({
-                    success: false,
-                    error: 'Failed to upload image'
-                });
-            }
-            res.json({
-                success: true,
-                image_url: result.secure_url
-            });
+    try {
+        const image_url = req.body.image_url ;
+
+        const cloudinary_res = await cloudinary.uploader.uploadImage(image_url , {
+            folder:"/upload/images" ,
+        
         });
+       
+    console.log(cloudinary_res);
     } catch (error) {
-        console.error('Error uploading image:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
+        
     }
 });
 // Schema for creating products 
