@@ -51,7 +51,7 @@ const storage = multer.diskStorage({
       null,
       path.join(
         __dirname,
-        process.env.status === "Production"
+        process.env.status == "Production"
           ? "/upload/images/"
           : "./upload/images/"
       )
