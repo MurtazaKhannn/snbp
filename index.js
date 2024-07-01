@@ -70,6 +70,14 @@ app.use(
         })
     )
 
+app.use(
+    fileUpload({
+        useTempFiles: true,
+        tempFileDir: '/tmp/'
+    })
+);
+      
+
 // const uploadMultiple = async (req , res , next) => {
 //     try{
 //         // const images = req.files;
@@ -102,22 +110,25 @@ app.use('/images' , express.static(path.join(__dirname ,'upload/images')))
 
 // Endpoint to upload images to Cloudinary
 // Endpoint to upload images to Cloudinary
-app.post('/upload/images', async (req, res , next) => {
-    
-
+app.post('/upload/images', async (req, res) => {
     try {
-        const image_url = req.body.image_url ;
-
-        const cloudinary_res = await cloudinary.uploader.uploadImage(image_url , {
-            folder:"/upload/images" ,
-        
-        });
-       
-    console.log(cloudinary_res);
+      const file = req.files.image;
+      const cloudinary_res = await cloudinary.uploader.upload(file.tempFilePath, {
+        folder: '/upload/images'
+      });
+  
+      res.json({
+        success: true,
+        image_url: cloudinary_res.secure_url
+      });
     } catch (error) {
-        
+      console.error('Error uploading image to Cloudinary:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to upload image'
+      });
     }
-});
+  });
 // Schema for creating products 
 const Product = mongoose.model("Product" , {
     id : {
