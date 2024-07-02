@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
 const { log } = require("console");
+const cloudinary = require("cloudinary").v2;
 // const dotenv = require("dotenv");
 
 const port = 4000;
@@ -25,7 +26,7 @@ app.use(cors());
 //         messages: "hello World"
 //     })
 // })
-// const handler = serverless(app);
+const handler = serverless(app);
 // Database Connection With MongoDB
 
 mongoose
