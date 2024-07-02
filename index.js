@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
+const multer = require("multer");
 const { log } = require("console");
 const cloudinary = require("cloudinary").v2;
 // const dotenv = require("dotenv");
