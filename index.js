@@ -27,7 +27,7 @@ app.use(cors());
 //         messages: "hello World"
 //     })
 // })
-const handler = serverless(app);
+// const handler = serverless(app);
 // Database Connection With MongoDB
 
 mongoose
@@ -73,7 +73,7 @@ app.get("/", (req, res) => {
 // });
 
 //Creating Upload Endpoint for images
-app.use("/images", express.static(path.join(__dirname, "upload/images")));
+// app.use("/images", express.static(path.join(__dirname, "upload/images")));
 
 app.post("/upload/images", upload.single("product"), (req, res) => {
   console.log(req.file);
