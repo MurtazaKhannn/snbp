@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
-const multer = require("multer");
+// const multer = require("multer");
 const { log } = require("console");
-const cloudinary = require("cloudinary").v2;
+// const cloudinary = require("cloudinary").v2;
 // const dotenv = require("dotenv");
 
 const port = 4000;
@@ -77,9 +77,9 @@ app.get("/", (req, res) => {
 
 app.post("/upload/images", upload.single("product"), (req, res) => {
   console.log(req.file);
-  cloudinary.uploader
-    .upload("upload/images/temp.jpg")
-    .then((result) => console.log(result));
+  // cloudinary.uploader
+  //   .upload("upload/images/temp.jpg")
+  //   .then((result) => console.log(result));
 
   res.json({
     success: 1,
