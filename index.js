@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
 const { log } = require("console");
-const dotenv = require("dotenv");
+// const dotenv = require("dotenv");
 
 const port = 4000;
 
@@ -15,7 +15,7 @@ const port = 4000;
 //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 //   };
 
-dotenv.config();
+// dotenv.config();
 
 app.use(express.json());
 app.use(cors());
