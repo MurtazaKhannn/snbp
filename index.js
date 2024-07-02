@@ -75,7 +75,7 @@ app.get("/", (req, res) => {
 //Creating Upload Endpoint for images
 // app.use("/images", express.static(path.join(__dirname, "upload/images")));
 
-app.post("/upload/images", upload.single("product"), (req, res) => {
+app.post("/upload/images", (req, res) => {
   console.log(req.file);
   // cloudinary.uploader
   //   .upload("upload/images/temp.jpg")
