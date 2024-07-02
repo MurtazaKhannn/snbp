@@ -3,11 +3,9 @@ const serverless = require("serverless-http");
 const app = express();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 const { log } = require("console");
-const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv");
 
 const port = 4000;
@@ -45,35 +43,36 @@ app.get("/", (req, res) => {
   res.send("Welcome to Silvanest");
 });
 // Image  Storage Engine
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(
-      null,
-      path.join(
-        __dirname,
-        process.env.status == "Production"
-          ? "/upload/images/"
-          : "./upload/images/"
-      )
-    );
-  },
-  filename: function (req, file, cb) {
-    return cb(null, "temp.jpg");
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(
+//       null,
+//       path.join(
+//         __dirname,
+//         process.env.status == "Production"
+//           ? "/upload/images/"
+//           : "./upload/images/"
+//       )
+//     );
+//   },
+//   filename: function (req, file, cb) {
+//     return cb(null, "temp.jpg");
+//   },
+// });
 
-const upload = multer({
-  storage: storage,
-});
+// const upload = multer({
+//   storage: storage,
+// });
 
-cloudinary.config({
-  cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.API_CLOUDINARY_API_KEY,
-  api_secret: process.env.API_CLOUDINARY_SECRET_KEY,
-});
+// cloudinary.config({
+//   cloud_name: process.env.API_CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.API_CLOUDINARY_API_KEY,
+//   api_secret: process.env.API_CLOUDINARY_SECRET_KEY,
+// });
 
 //Creating Upload Endpoint for images
-app.use("/images", express.static(path.join(__dirname, "upload/images")));
+// app.use("/images", express.static(path.join(__dirname, "upload/images")));
+
 app.post("/upload/images", upload.single("product"), (req, res) => {
   console.log(req.file);
   cloudinary.uploader
